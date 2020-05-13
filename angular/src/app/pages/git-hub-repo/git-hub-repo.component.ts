@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GitHubRepoService } from 'src/app/services/git-hub-repo/git-hub-repo.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-git-hub-repo',
@@ -27,7 +28,8 @@ export class GitHubRepoComponent implements OnInit {
   months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
   constructor(
-    private gitHubRepoService: GitHubRepoService
+    private gitHubRepoService: GitHubRepoService,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
@@ -48,6 +50,8 @@ export class GitHubRepoComponent implements OnInit {
     this.p = page
     this.loading = true
 
+    this.spinner.show()
+
     this.gitHubRepoService.getRepoByStringAndPage({
       per_page: this.per_page,
       query: this.query,
@@ -64,6 +68,7 @@ export class GitHubRepoComponent implements OnInit {
         data.items[i].language = data.items[i].language ? data.items[i].language : 'N/A'
       }
       this.repos = data.items
+      this.spinner.hide()
     }, (err) => {
       this.repos = []
     })
