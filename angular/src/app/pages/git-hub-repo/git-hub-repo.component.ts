@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GitHubRepoService } from 'src/app/services/git-hub-repo/git-hub-repo.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { GitResponse } from 'src/app/shared/git_response';
+import { Repository } from 'src/app/shared/repository';
 
 @Component({
   selector: 'app-git-hub-repo',
@@ -28,20 +30,12 @@ export class GitHubRepoComponent implements OnInit {
   months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
   constructor(
-    private gitHubRepoService: GitHubRepoService,
+    public gitHubRepoService: GitHubRepoService,
     private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
-    this.gitHubRepoService.getRepoByStringAndPage({
-      per_page: this.per_page,
-      query: this.query,
-      page: this.p
-    }).then((res: GitResponse) => {
-      this.repos = res.items
-    }, (err) => {
-      this.repos = []
-    })
+    this.repos = []
   }
 
   onRetrieving(page): void {
@@ -56,18 +50,18 @@ export class GitHubRepoComponent implements OnInit {
       per_page: this.per_page,
       query: this.query,
       page: this.p
-    }).then(data => {
+    }).then((res: GitResponse) => {
       this.loading = false
-      this.total_repos = data.total_count
-      this.total_repos_desc = `${data.total_count} repository results`
+      this.total_repos = res.total_count
+      this.total_repos_desc = `${res.total_count} repository results`
 
-      for (let i = 0; i < data.items.length; i++) {
-        let o = data.items[i]
+      for (let i = 0; i < res.items.length; i++) {
+        let o = res.items[i]
         let s = `Updated on ${this.days[new Date(o.updated_at).getDay()]} ${this.months[new Date().getMonth()]} ${new Date().getDate()} ${new Date().getFullYear()}`
-        data.items[i].updated_date = s
-        data.items[i].language = data.items[i].language ? data.items[i].language : 'N/A'
+        res.items[i].updated_date = s
+        res.items[i].language = res.items[i].language ? res.items[i].language : 'N/A'
       }
-      this.repos = data.items
+      this.repos = res.items
       this.spinner.hide()
     }, (err) => {
       this.repos = []
@@ -80,18 +74,4 @@ export class GitHubRepoComponent implements OnInit {
     this.search_again = `Please try to search again by using different words`
     this.onRetrieving(1)
   }
-}
-
-interface GitResponse {
-  incomplete_results: boolean,
-  items: any,
-  total_count: number
-}
-
-interface Repository {
-  full_name: string,
-  language: string,
-  description: string,
-  stargazers_count: number,
-  updated_date: Date
 }

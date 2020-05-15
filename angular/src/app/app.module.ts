@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 import { AppComponent } from './app.component';
 import { GitHubRepoComponent } from './pages/git-hub-repo/git-hub-repo.component';
@@ -34,6 +35,7 @@ import { GitHubRepoService } from './services/git-hub-repo/git-hub-repo.service'
       }
     ])
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     GitHubRepoService
   ],
